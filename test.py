@@ -56,18 +56,27 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/artifacts_path/Release/foo_static.lib'))
             self.assertTrue(os.path.exists('build/artifacts_path/Release/foo_shared.dll'))
             self.assertTrue(os.path.exists('build/artifacts_path/Release/hello.exe'))
+            self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_static.lib'))
+            self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_shared.dll'))
+            self.assertTrue(os.path.exists('build/artifacts_path/Release/subhello.exe'))
         elif PLATFORM == 'linux':
             self.check_generate('artifacts_path')
             self.check_build('artifacts_path')
             self.assertTrue(os.path.exists('build/artifacts_path/libfoo_static.a'))
             self.assertTrue(os.path.exists('build/artifacts_path/libfoo_shared.so'))
             self.assertTrue(os.path.exists('build/artifacts_path/hello'))
+            self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_static.a'))
+            self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_shared.so'))
+            self.assertTrue(os.path.exists('build/artifacts_path/subhello'))
         elif PLATFORM == 'mac':
             self.check_generate('artifacts_path')
             self.check_build('artifacts_path')
             self.assertTrue(os.path.exists('build/artifacts_path/libfoo_static.a'))
             self.assertTrue(os.path.exists('build/artifacts_path/libfoo_shared.dylib'))
             self.assertTrue(os.path.exists('build/artifacts_path/hello'))
+            self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_static.a'))
+            self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_shared.dylib'))
+            self.assertTrue(os.path.exists('build/artifacts_path/subhello'))
         
         shutil.rmtree('build/artifacts_path')
 

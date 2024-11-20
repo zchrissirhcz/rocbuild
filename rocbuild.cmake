@@ -32,4 +32,4 @@ macro(rocbuild_set_artifacts_path)
 endmacro()
 
 
-
+rocbuild_set_artifacts_path()
