@@ -1,9 +1,10 @@
 # Author: Zhuo Zhang <imzhuo@foxmail.com>
 # Homepage: https://github.com/zchrissirhcz/rocbuild
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 
 # CMake 3.10: include_guard()
+# CMake 3.21: $<TARGET_RUNTIME_DLLS:tgt>
 
 include_guard()
 
@@ -59,6 +60,14 @@ macro(rocbuild_enable_sanitizer_options)
     include(plugins/tsan.cmake)
   endif()
 endmacro()
+
+
+function(rocbuild_copy_dll target)
+  add_custom_command(TARGET ${target} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
+    COMMAND_EXPAND_LISTS
+  )
+endfunction()
 
 
 rocbuild_set_artifacts_path()
