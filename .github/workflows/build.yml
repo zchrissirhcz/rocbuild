@@ -18,7 +18,7 @@ jobs:
       - name: Set up CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: "~3.30.0"
+          cmakeVersion: "~3.31.0"
           ninjaVersion: "^1.12.1"
 
       - name: Build
@@ -29,6 +29,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "~3.31.0"
+          ninjaVersion: "^1.12.1"
+
+      - name: "Enter Visual Studio Developer Command Prompt"
+        uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
 
       - name: Build
         run: python test.py
@@ -42,7 +53,7 @@ jobs:
       - name: Set up CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: "~3.30.0"
+          cmakeVersion: "~3.31.0"
           ninjaVersion: "^1.12.1"
 
       - name: Build

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(test_artifacts_path)
+project(test_artifacts_path LANGUAGES C)
 include(../../rocbuild.cmake)
 add_library(foo_static STATIC ../src/foo.c)
 add_library(foo_shared SHARED ../src/foo.c)

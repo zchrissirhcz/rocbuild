@@ -6,11 +6,11 @@ import os
 
 
 if platform.system() == 'Windows':
-    PLATFORM = 'vs2022'
+    os_name = 'windows'
 elif platform.system() == 'Darwin':
-    PLATFORM = 'mac'
+    os_name = 'mac'
 elif platform.system() == 'Linux':
-    PLATFORM = 'linux'
+    os_name = 'linux'
 
 
 def decode(buf):
@@ -30,7 +30,7 @@ def check_output(cmd):
 
 
 class RocBuildTest(unittest.TestCase):
-    
+
     def setUp(self):
         pass
 
@@ -50,8 +50,31 @@ class RocBuildTest(unittest.TestCase):
         return out.replace('\r\n', '\n')
 
     def test_artifact_path(self):
-        if PLATFORM.startswith('vs'):
-            self.check_generate('artifacts_path')
+        if os_name == 'windows':
+            # determine if cl.exe is available
+            ret, out = check_output('cl')
+            if ret == 0:
+                self.check_generate('artifacts_path', args='-G "Ninja Multi-Config"')
+                self.check_build('artifacts_path', '--config Release')
+                self.assertTrue(os.path.exists('build/artifacts_path/Release/foo_static.lib'))
+                self.assertTrue(os.path.exists('build/artifacts_path/Release/foo_shared.dll'))
+                self.assertTrue(os.path.exists('build/artifacts_path/Release/hello.exe'))
+                self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_static.lib'))
+                self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_shared.dll'))
+                self.assertTrue(os.path.exists('build/artifacts_path/Release/subhello.exe'))
+                shutil.rmtree('build/artifacts_path')
+
+                self.check_generate('artifacts_path', args="-G Ninja")
+                self.check_build('artifacts_path', '--config Release')
+                self.assertTrue(os.path.exists('build/artifacts_path/foo_static.lib'))
+                self.assertTrue(os.path.exists('build/artifacts_path/foo_shared.dll'))
+                self.assertTrue(os.path.exists('build/artifacts_path/hello.exe'))
+                self.assertTrue(os.path.exists('build/artifacts_path/subfoo_static.lib'))
+                self.assertTrue(os.path.exists('build/artifacts_path/subfoo_shared.dll'))
+                self.assertTrue(os.path.exists('build/artifacts_path/subhello.exe'))
+                shutil.rmtree('build/artifacts_path')
+
+            self.check_generate('artifacts_path', args='-G "Visual Studio 17 2022" -A x64')
             self.check_build('artifacts_path', '--config Release')
             self.assertTrue(os.path.exists('build/artifacts_path/Release/foo_static.lib'))
             self.assertTrue(os.path.exists('build/artifacts_path/Release/foo_shared.dll'))
@@ -59,7 +82,7 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_static.lib'))
             self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_shared.dll'))
             self.assertTrue(os.path.exists('build/artifacts_path/Release/subhello.exe'))
-        elif PLATFORM == 'linux':
+        elif os_name == 'linux':
             self.check_generate('artifacts_path')
             self.check_build('artifacts_path')
             self.assertTrue(os.path.exists('build/artifacts_path/libfoo_static.a'))
@@ -68,7 +91,7 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_static.a'))
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_shared.so'))
             self.assertTrue(os.path.exists('build/artifacts_path/subhello'))
-        elif PLATFORM == 'mac':
+        elif os_name == 'mac':
             self.check_generate('artifacts_path')
             self.check_build('artifacts_path')
             self.assertTrue(os.path.exists('build/artifacts_path/libfoo_static.a'))
@@ -77,9 +100,8 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_static.a'))
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_shared.dylib'))
             self.assertTrue(os.path.exists('build/artifacts_path/subhello'))
-        
-        shutil.rmtree('build/artifacts_path')
 
+        shutil.rmtree('build/artifacts_path')
 
 
 if __name__ == "__main__":
