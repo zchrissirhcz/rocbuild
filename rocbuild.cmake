@@ -46,5 +46,21 @@ macro(rocbuild_enable_ninja_colorful_output)
 endmacro()
 
 
+macro(rocbuild_enable_sanitizer_options)
+  if(ASAN)
+    include(plugins/asan.cmake)
+  endif()
+
+  if(HWASAN)
+    include(plugins/hwasan.cmake)
+  endif()
+
+  if(TSAN)
+    include(plugins/tsan.cmake)
+  endif()
+endmacro()
+
+
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()
+rocbuild_enable_sanitizer_options()
