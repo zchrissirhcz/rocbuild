@@ -1,10 +1,11 @@
 # Author: Zhuo Zhang <imzhuo@foxmail.com>
 # Homepage: https://github.com/zchrissirhcz/rocbuild
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 
 # CMake 3.10: include_guard()
 # CMake 3.21: $<TARGET_RUNTIME_DLLS:tgt>
+# CMake 3.13: target_link_options() use "LINKER:" as a portable way for different compiler + linker combo
 
 include_guard()
 
@@ -263,6 +264,20 @@ function(rocbuild_hide_symbols TARGET)
     if((CMAKE_C_COMPILER_ID MATCHES "GNU|Clang") OR
        (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang"))
       target_compile_options(${TARGET} PRIVATE "-fvisibility=hidden")
+    endif()
+  endif()
+endfunction()
+
+
+function(rocbuild_link_as_needed TARGET)
+  get_target_property(TARGET_TYPE ${TARGET} TYPE)
+  if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")  
+    if((CMAKE_C_COMPILER_ID MATCHES "^(GNU|Clang)$") OR
+       (CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang)$"))
+      target_link_options(${TARGET} PRIVATE "LINKER:-as-needed")
+    elseif((CMAKE_C_COMPILER_ID STREQUAL "AppleClang") OR
+           (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"))
+      target_link_options(${TARGET} PRIVATE "LINKER:-dead_strip_dylibs")
     endif()
   endif()
 endfunction()

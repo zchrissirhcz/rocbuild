@@ -222,5 +222,43 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(items[3] == 'test.exe')
             shutil.rmtree('build/copy_dlls')
 
+    def test_link_as_needed(self):
+        if os_name == 'linux':
+            self.check_generate('link_as_needed', args='-DLINK_AS_NEEDED=0')
+            self.check_build('link_as_needed')
+            cmd = 'ldd build/link_as_needed/libfoo_math.so'
+            ret, out = check_output(cmd)
+            print(out)
+            self.assertEqual(0, ret, out)
+            self.assertIn('libfoo.so =>', out)
+            shutil.rmtree('build/link_as_needed')
+
+            self.check_generate('link_as_needed', args='-DLINK_AS_NEEDED=1')
+            self.check_build('link_as_needed')
+            cmd = 'ldd build/link_as_needed/libfoo_math.so'
+            ret, out = check_output(cmd)
+            print(out)
+            self.assertEqual(0, ret, out)
+            self.assertTrue('libfoo.so =>' not in out)
+            shutil.rmtree('build/link_as_needed')
+        elif os_name == 'mac':
+            self.check_generate('link_as_needed', args='-DLINK_AS_NEEDED=0')
+            self.check_build('link_as_needed')
+            cmd = 'otool -L build/link_as_needed/libfoo_math.dylib'
+            ret, out = check_output(cmd)
+            print(out)
+            self.assertEqual(0, ret, out)
+            self.assertIn('@rpath/libfoo.dylib', out)
+            shutil.rmtree('build/link_as_needed')
+
+            self.check_generate('link_as_needed', args='-DLINK_AS_NEEDED=1')
+            self.check_build('link_as_needed')
+            cmd = 'otool -L build/link_as_needed/libfoo_math.dylib'
+            ret, out = check_output(cmd)
+            print(out)
+            self.assertEqual(0, ret, out)
+            self.assertTrue('@rpath/libfoo.dylib' not in out)
+            shutil.rmtree('build/link_as_needed')
+
 if __name__ == "__main__":
     unittest.main()
