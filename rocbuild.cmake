@@ -127,4 +127,3 @@ endfunction()
 
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()
-rocbuild_enable_sanitizer_options()
