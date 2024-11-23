@@ -1,16 +1,16 @@
 #pragma once
 
-#ifdef FOO_EXPORTS
+#ifdef BAZ_EXPORTS
 #   if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__)
-#       define FOO_API __declspec(dllexport)
+#       define BAZ_API __declspec(dllexport)
 #   elif defined(__GNUC__) && __GNUC__ >= 4
-#       define FOO_API __attribute__ ((visibility ("default")))
+#       define BAZ_API __attribute__ ((visibility ("default")))
 #   endif
 #else
 #   if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__)
-#       define FOO_API __declspec(dllimport)
+#       define BAZ_API __declspec(dllimport)
 #   else
-#       define FOO_API
+#       define BAZ_API
 #   endif
 #endif
 
@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-FOO_API int foo();
+BAZ_API int baz();
 
 #ifdef __cplusplus
 }

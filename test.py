@@ -82,6 +82,7 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_static.lib'))
             self.assertTrue(os.path.exists('build/artifacts_path/Release/subfoo_shared.dll'))
             self.assertTrue(os.path.exists('build/artifacts_path/Release/subhello.exe'))
+            shutil.rmtree('build/artifacts_path')
         elif os_name == 'linux':
             self.check_generate('artifacts_path')
             self.check_build('artifacts_path')
@@ -91,6 +92,7 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_static.a'))
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_shared.so'))
             self.assertTrue(os.path.exists('build/artifacts_path/subhello'))
+            shutil.rmtree('build/artifacts_path')
         elif os_name == 'mac':
             self.check_generate('artifacts_path')
             self.check_build('artifacts_path')
@@ -100,8 +102,7 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_static.a'))
             self.assertTrue(os.path.exists('build/artifacts_path/libsubfoo_shared.dylib'))
             self.assertTrue(os.path.exists('build/artifacts_path/subhello'))
-
-        shutil.rmtree('build/artifacts_path')
+            shutil.rmtree('build/artifacts_path')
 
     def test_debug_postfix(self):
         if os_name == 'windows':
@@ -201,6 +202,25 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(lines[0].endswith(' T _bar'))
             self.assertTrue(lines[1].endswith(' T _bar_internal'))
             shutil.rmtree('build/hide_symbols')
+
+    def test_copy_dlls(self):
+        if os_name == 'windows':
+            self.check_generate('copy_dlls', args='-DCOPY_DLLS=0')
+            self.check_build('copy_dlls', args='--config Release')
+            items = os.listdir('build/copy_dlls/test/Release')
+            self.assertEqual(len(items), 1, items)
+            self.assertTrue(items[0] == 'test.exe')
+            shutil.rmtree('build/copy_dlls')
+
+            self.check_generate('copy_dlls', args='-DCOPY_DLLS=1')
+            self.check_build('copy_dlls', args='--config Release')
+            items = os.listdir('build/copy_dlls/test/Release')
+            self.assertEqual(len(items), 4)
+            self.assertTrue(items[0] == 'bar.dll')
+            self.assertTrue(items[1] == 'baz.dll')
+            self.assertTrue(items[2] == 'foo.dll')
+            self.assertTrue(items[3] == 'test.exe')
+            shutil.rmtree('build/copy_dlls')
 
 if __name__ == "__main__":
     unittest.main()
