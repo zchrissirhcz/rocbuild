@@ -56,20 +56,20 @@ endfunction()
 
 
 # Scan opencv_videoio dlls and copy them to the target executable's folder
-function(rocbuild_copy_opencv_videoio_plugin_dll target)
+function(rocbuild_copy_opencv_videoio_plugin_dlls target)
   # Sanity checks
   if(CMAKE_CROSSCOMPILING OR (NOT WIN32))
     return()
   endif()
 
   if(NOT TARGET ${target})
-    message(WARNING "rocbuild_copy_opencv_videoio_plugin_dll() was called with a non-target: ${target}")
+    message(WARNING "rocbuild_copy_opencv_videoio_plugin_dlls() was called with a non-target: ${target}")
     return()
   endif()
 
   get_target_property(TYPE ${target} TYPE)
   if(NOT ${TYPE} STREQUAL "EXECUTABLE")
-    message(WARNING "rocbuild_copy_opencv_videoio_plugin_dll() was called on a non-executable target: ${target}")
+    message(WARNING "rocbuild_copy_opencv_videoio_plugin_dlls() was called on a non-executable target: ${target}")
     return()
   endif()
 
@@ -80,30 +80,30 @@ function(rocbuild_copy_opencv_videoio_plugin_dll target)
   endif()
   
   if(DEFINED CMAKE_CONFIGURATION_TYPES)
-    set(COPY_SCRIPT "${CMAKE_BINARY_DIR}/rocbuild_copy_opencv_videoio_plugin_dll_for_${target}_$<CONFIG>.cmake")
+    set(COPY_SCRIPT "${CMAKE_BINARY_DIR}/rocbuild_copy_opencv_videoio_plugin_dlls_for_${target}_$<CONFIG>.cmake")
   else()
-    set(COPY_SCRIPT "${CMAKE_BINARY_DIR}/rocbuild_copy_opencv_videoio_plugin_dll_for_${target}.cmake")
+    set(COPY_SCRIPT "${CMAKE_BINARY_DIR}/rocbuild_copy_opencv_videoio_plugin_dlls_for_${target}.cmake")
   endif()
   set(COPY_SCRIPT_CONTENT "")
 
   if(EXISTS "${OpenCV_DIR}/bin")
-    set(opencv_videoio_dll_dir "${OpenCV_DIR}/bin")
+    set(opencv_videoio_plugin_dll_dir "${OpenCV_DIR}/bin")
   elseif(EXISTS "${OpenCV_DIR}/../bin")
-    set(opencv_videoio_dll_dir "${OpenCV_DIR}/../bin")
+    set(opencv_videoio_plugin_dll_dir "${OpenCV_DIR}/../bin")
   else()
-    message(WARNING "Could not find opencv_videoio dlls in ${OpenCV_DIR}/bin or ${OpenCV_DIR}/../bin")
+    message(WARNING "Could not find opencv videoio plugin dlls in ${OpenCV_DIR}/bin or ${OpenCV_DIR}/../bin")
     return()
   endif()
 
-  file(REAL_PATH "${opencv_videoio_dll_dir}" opencv_videoio_dll_dir)
-  file(GLOB opencv_videoio_dlls "${opencv_videoio_dll_dir}/opencv_videoio_*.dll")
+  file(REAL_PATH "${opencv_videoio_plugin_dll_dir}" opencv_videoio_plugin_dll_dir)
+  file(GLOB opencv_videoio_plugin_dlls "${opencv_videoio_plugin_dll_dir}/opencv_videoio_*.dll")
 
   # convert opencv_videoio_dlls to a string
-  string(REPLACE ";" "\n" opencv_videoio_dlls "${opencv_videoio_dlls}")
+  string(REPLACE ";" "\n" opencv_videoio_plugin_dlls "${opencv_videoio_plugin_dlls}")
 
   string(APPEND COPY_SCRIPT_CONTENT
-    "set(opencv_videoio_dlls\n${opencv_videoio_dlls}\n)\n"
-    "foreach(file IN ITEMS \${opencv_videoio_dlls})\n"
+    "set(opencv_videoio_plugin_dlls\n${opencv_videoio_plugin_dlls}\n)\n"
+    "foreach(file IN ITEMS \${opencv_videoio_plugin_dlls})\n"
     "  if(EXISTS \"\${file}\")\n"
     "    execute_process(COMMAND \${CMAKE_COMMAND} -E copy_if_different \"\${file}\" \"$<TARGET_FILE_DIR:${target}>\")\n"
     "  endif()\n"
