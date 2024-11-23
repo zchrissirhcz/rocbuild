@@ -4,4 +4,7 @@ project(test_postfix)
 include(../../rocbuild.cmake)
 
 add_library(foo STATIC ../src/foo.c)
-rocbuild_define_package(foo)
+rocbuild_set_debug_postfix(foo)
+
+add_executable(hello ../src/hello.c)
+rocbuild_set_debug_postfix(hello)
