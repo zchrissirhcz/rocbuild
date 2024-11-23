@@ -149,5 +149,16 @@ function(rocbuild_set_debug_postfix TARGET)
 endfunction()
 
 
+function(rocbuild_hide_symbols TARGET)
+  get_target_property(TARGET_TYPE ${TARGET} TYPE)
+  if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")  
+    if((CMAKE_C_COMPILER_ID MATCHES "GNU|Clang") OR
+       (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang"))
+      target_compile_options(${TARGET} PRIVATE "-fvisibility=hidden")
+    endif()
+  endif()
+endfunction()
+
+
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()

@@ -154,6 +154,53 @@ class RocBuildTest(unittest.TestCase):
             self.assertTrue(os.path.exists('build/debug_postfix/hello'))
             shutil.rmtree('build/debug_postfix')
 
+    def test_hide_symbols(self):
+        if os_name == 'linux':
+            self.check_generate('hide_symbols', args='-DHIDDEN=1')
+            self.check_build('hide_symbols')
+            cmd = 'nm -C build/hide_symbols/libbar.so | grep " T "'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertEqual(len(lines), 1, lines)
+            self.assertTrue(lines[0].endswith(' T bar'))
+            shutil.rmtree('build/hide_symbols')
+
+            self.check_generate('hide_symbols', args='-DHIDDEN=0')
+            self.check_build('hide_symbols')
+            cmd = f'nm -C build/hide_symbols/libbar.so | grep " T "'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertEqual(len(lines), 2, lines)
+            self.assertTrue(lines[0].endswith(' T bar'))
+            self.assertTrue(lines[1].endswith(' T bar_internal'))
+            shutil.rmtree('build/hide_symbols')
+        elif os_name == 'mac':
+            self.check_generate('hide_symbols', args='-DHIDDEN=1')
+            self.check_build('hide_symbols')
+            cmd = 'nm -C build/hide_symbols/libbar.dylib | grep " T "'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertEqual(len(lines), 1, lines)
+            self.assertTrue(lines[0].endswith(' T _bar'))
+            shutil.rmtree('build/hide_symbols')
+
+            self.check_generate('hide_symbols', args='-DHIDDEN=0')
+            self.check_build('hide_symbols')
+            cmd = f'nm -C build/hide_symbols/libbar.dylib | grep " T "'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertEqual(len(lines), 2, lines)
+            self.assertTrue(lines[0].endswith(' T _bar'))
+            self.assertTrue(lines[1].endswith(' T _bar_internal'))
+            shutil.rmtree('build/hide_symbols')
 
 if __name__ == "__main__":
     unittest.main()
