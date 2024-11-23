@@ -47,21 +47,6 @@ macro(rocbuild_enable_ninja_colorful_output)
 endmacro()
 
 
-macro(rocbuild_enable_sanitizer_options)
-  if(ASAN)
-    include(plugins/asan.cmake)
-  endif()
-
-  if(HWASAN)
-    include(plugins/hwasan.cmake)
-  endif()
-
-  if(TSAN)
-    include(plugins/tsan.cmake)
-  endif()
-endmacro()
-
-
 function(rocbuild_copy_dll target)
   add_custom_command(TARGET ${target} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
