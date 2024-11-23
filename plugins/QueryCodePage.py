@@ -12,16 +12,10 @@ def is_windows():
 
 if is_windows():
     from winreg import (
-        CloseKey,
         OpenKey,
         QueryValueEx,
-        SetValueEx,
-        HKEY_CURRENT_USER,
         HKEY_LOCAL_MACHINE,
-        KEY_ALL_ACCESS,
         KEY_READ,
-        REG_EXPAND_SZ,
-        REG_SZ,
     )
 
 if __name__ == "__main__":
