@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.10)
 
 function(print_args)
   math(EXPR LAST_INDEX "${CMAKE_ARGC}-1")
@@ -58,6 +58,12 @@ function(set_generator)
   set(ROCBUILD_GENERATOR ${ROCBUILD_GENERATOR} PARENT_SCOPE)
   set(ROCBUILD_GENERATOR_EXTRA ${ROCBUILD_GENERATOR_EXTRA} PARENT_SCOPE)
 endfunction()
+
+
+if(NOT DEFINED CMAKE_SCRIPT_MODE_FILE)
+  message(FATAL_ERROR "rocsetup.cmake can only be used in script mode, i.e. cmake -P rocsetup.cmake ...")
+  return()
+endif()
 
 
 print_original_args()
