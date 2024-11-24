@@ -283,5 +283,20 @@ function(rocbuild_link_as_needed TARGET)
 endfunction()
 
 
+function(rocbuild_remove_unused_data_and_function TARGET)
+  if(CMAKE_BUILD_TYPE STREQUAL "Release" OR "$<CONFIG:Release>")
+    if((CMAKE_C_COMPILER_ID MATCHES "^(GNU|Clang)$") OR
+       (CMAKE_CXX_COMPILER_ID MATCHES "^(GNU|Clang)$"))
+      target_compile_options(${TARGET} PRIVATE "-fdata-sections" "-ffunction-sections")
+      target_link_options(${TARGET} PRIVATE "LINKER:--gc-sections")
+    elseif((CMAKE_C_COMPILER_ID STREQUAL "AppleClang") OR
+           (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang"))
+      target_compile_options(${TARGET} PRIVATE "-fdata-sections" "-ffunction-sections")
+      target_link_options(${TARGET} PRIVATE "LINKER:-dead_strip")
+    endif()
+  endif()
+endfunction()
+
+
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()

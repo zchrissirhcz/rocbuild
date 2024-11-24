@@ -228,7 +228,6 @@ class RocBuildTest(unittest.TestCase):
             self.check_build('link_as_needed')
             cmd = 'ldd build/link_as_needed/libfoo_math.so'
             ret, out = check_output(cmd)
-            print(out)
             self.assertEqual(0, ret, out)
             self.assertIn('libfoo.so =>', out)
             shutil.rmtree('build/link_as_needed')
@@ -237,7 +236,6 @@ class RocBuildTest(unittest.TestCase):
             self.check_build('link_as_needed')
             cmd = 'ldd build/link_as_needed/libfoo_math.so'
             ret, out = check_output(cmd)
-            print(out)
             self.assertEqual(0, ret, out)
             self.assertTrue('libfoo.so =>' not in out)
             shutil.rmtree('build/link_as_needed')
@@ -246,7 +244,6 @@ class RocBuildTest(unittest.TestCase):
             self.check_build('link_as_needed')
             cmd = 'otool -L build/link_as_needed/libfoo_math.dylib'
             ret, out = check_output(cmd)
-            print(out)
             self.assertEqual(0, ret, out)
             self.assertIn('@rpath/libfoo.dylib', out)
             shutil.rmtree('build/link_as_needed')
@@ -255,10 +252,55 @@ class RocBuildTest(unittest.TestCase):
             self.check_build('link_as_needed')
             cmd = 'otool -L build/link_as_needed/libfoo_math.dylib'
             ret, out = check_output(cmd)
-            print(out)
             self.assertEqual(0, ret, out)
             self.assertTrue('@rpath/libfoo.dylib' not in out)
             shutil.rmtree('build/link_as_needed')
+
+    def test_unused_data_and_function(self):
+        if os_name == 'mac':
+            self.check_generate('unused_data_and_function', args='-DCMAKE_BUILD_TYPE=Release -DREMOVE_UNUSED_DATA_AND_FUNCTION=0')
+            self.check_build('unused_data_and_function')
+            cmd = 'objdump -t build/unused_data_and_function/test'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertTrue(any(line.strip().endswith("g     F __TEXT,__text _unused_function") for line in lines))
+            self.assertTrue(any(line.strip().endswith("g     O __DATA,__data _unused_global_variable") for line in lines))
+            shutil.rmtree('build/unused_data_and_function')
+
+            self.check_generate('unused_data_and_function', args='-DCMAKE_BUILD_TYPE=Release -DREMOVE_UNUSED_DATA_AND_FUNCTION=1')
+            self.check_build('unused_data_and_function')
+            cmd = 'objdump -t build/unused_data_and_function/test'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertTrue(all(not line.strip().endswith("g     F __TEXT,__text _unused_function") for line in lines))
+            self.assertTrue(all(not line.strip().endswith("g     O __DATA,__data _unused_global_variable") for line in lines))
+            shutil.rmtree('build/unused_data_and_function')
+        elif os_name == 'linux':
+            self.check_generate('unused_data_and_function', args='-DCMAKE_BUILD_TYPE=Release -DREMOVE_UNUSED_DATA_AND_FUNCTION=0')
+            self.check_build('unused_data_and_function')
+            cmd = 'objdump -t build/unused_data_and_function/test'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertTrue(any(line.strip().endswith(" unused_function") for line in lines))
+            self.assertTrue(any(line.strip().endswith(" unused_global_variable") for line in lines))
+            shutil.rmtree('build/unused_data_and_function')
+
+            self.check_generate('unused_data_and_function', args='-DCMAKE_BUILD_TYPE=Release -DREMOVE_UNUSED_DATA_AND_FUNCTION=1')
+            self.check_build('unused_data_and_function')
+            cmd = 'objdump -t build/unused_data_and_function/test'
+            ret, out = check_output(cmd)
+            self.assertEqual(0, ret, out)
+            out = out.replace('\r\n', '\n')
+            lines = out.strip().split('\n')
+            self.assertTrue(all(not line.strip().endswith(" unused_function") for line in lines))
+            self.assertTrue(all(not line.strip().endswith(" unused_global_variable") for line in lines))
+            shutil.rmtree('build/unused_data_and_function')
 
 if __name__ == "__main__":
     unittest.main()
