@@ -8,7 +8,7 @@
 
 Usage:
 ```pwsh
-cmake -P rocsetup.cmake -p vs2022 -a x64
+cmake -P rocsetup.cmake -p vs2022 -a x64 -S . -B build
 ```
 
 Will parse and then run:

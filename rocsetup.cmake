@@ -8,9 +8,18 @@ function(print_args)
 endfunction()
 
 
+function(print_original_args)
+  set(all_args)
+  foreach(i RANGE 0 ${CMAKE_ARGC})
+    set(all_args "${all_args} ${CMAKE_ARGV${i}}")
+  endforeach()
+  message(STATUS "ROCSETUP/I: Raw command:${all_args}")
+endfunction()
+
+
 function(parse_args)
   math(EXPR LAST_INDEX "${CMAKE_ARGC}-1")
-  set(options -p -a)
+  set(options -p -a -S -B)
   set(current_option "")
   foreach(i RANGE 1 ${LAST_INDEX})
     # message("Argument ${i}: ${CMAKE_ARGV${i}}")
@@ -22,6 +31,10 @@ function(parse_args)
         set(ROCBUILD_PLATFORM "${arg}" PARENT_SCOPE)
       elseif(current_option STREQUAL "-a")
         set(ROCBUILD_ARCH "${arg}" PARENT_SCOPE)
+      elseif(current_option STREQUAL "-S")
+        set(ROCBUILD_SOURCE_DIR "${arg}" PARENT_SCOPE)
+      elseif(current_option STREQUAL "-B")
+        set(ROCBUILD_BINARY_DIR "${arg}" PARENT_SCOPE)
       endif()
       set(current_option "")
     endif()
@@ -46,22 +59,41 @@ function(set_generator)
   set(ROCBUILD_GENERATOR_EXTRA ${ROCBUILD_GENERATOR_EXTRA} PARENT_SCOPE)
 endfunction()
 
+
+print_original_args()
 #print_args()
 parse_args()
 set_generator()
 
-message(STATUS "ROCBUILD_PLATFORM: ${ROCBUILD_PLATFORM}")
-message(STATUS "ROCBUILD_ARCH: ${ROCBUILD_ARCH}")
-message(STATUS "ROCBUILD_GENERATOR: ${ROCBUILD_GENERATOR}")
+set(cmake_arguments)
 
-set(cmake_arguments
-  -S . -B build 
-  -G ${ROCBUILD_GENERATOR} ${ROCBUILD_GENERATOR_EXTRA} 
-  -DROCBUILD_PLATFORM=${ROCBUILD_PLATFORM} -DROCBUILD_ARCH=${ROCBUILD_ARCH}
-)
+if(ROCBUILD_SOURCE_DIR)
+  list(APPEND cmake_arguments -S ${ROCBUILD_SOURCE_DIR})
+endif()
 
-string(REPLACE ";" " " cmake_arguments_str "${cmake_arguments}")
-message(STATUS "CMake arguments: ${cmake_arguments_str}")
+if(ROCBUILD_BINARY_DIR)
+  list(APPEND cmake_arguments -B ${ROCBUILD_BINARY_DIR})
+endif()
+
+if(ROCBUILD_GENERATOR)
+  list(APPEND cmake_arguments -G ${ROCBUILD_GENERATOR} ${ROCBUILD_GENERATOR_EXTRA})
+endif()
+
+if(ROCBUILD_PLATFORM)
+  list(APPEND cmake_arguments -DROCBUILD_PLATFORM=${ROCBUILD_PLATFORM})
+else()
+  message(FATAL_ERROR "Platform not specified")
+endif()
+
+if(ROCBUILD_ARCH)
+  list(APPEND cmake_arguments -DROCBUILD_ARCH=${ROCBUILD_ARCH})
+else()
+  message(FATAL_ERROR "Architecture not specified")
+endif()
+
+set(parsed_command "cmake ${cmake_arguments}")
+string(REPLACE ";" " " parsed_command_str "${parsed_command}")
+message(STATUS "ROCSETUP/I: Parsed command: ${parsed_command_str}")
 execute_process(
   COMMAND cmake ${cmake_arguments}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -70,7 +102,13 @@ execute_process(
   ERROR_VARIABLE error_output
 )
 
-message("${result}")
-message("${output}")
-message("${error_output}")
+if(result)
+  message("${result}")
+endif()
+if(output)
+  message("${output}")
+endif()
+if(error_output)
+  message("${error_output}")
+endif()
 

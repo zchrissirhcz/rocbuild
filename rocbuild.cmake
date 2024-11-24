@@ -92,14 +92,6 @@ endfunction()
 # dependencies of the executable target have been defined, otherwise some .dlls might not be copied to the target
 # folder.
 function(rocbuild_copy_dlls target)
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
-    add_custom_command(TARGET ${target} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
-      COMMAND_EXPAND_LISTS
-    )
-    return()
-  endif()
-
   # Sanity checks
   if(CMAKE_CROSSCOMPILING OR (NOT WIN32))
     return()
@@ -114,6 +106,14 @@ function(rocbuild_copy_dlls target)
   get_target_property(TYPE ${target} TYPE)
   if(NOT ${TYPE} STREQUAL "EXECUTABLE")
     message(FATAL_ERROR "rocbuild_copy_dlls() was called on a non-executable target: ${target}")
+  endif()
+
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
+      COMMAND_EXPAND_LISTS
+    )
+    return()
   endif()
 
   # set the name of file to be written
@@ -298,5 +298,13 @@ function(rocbuild_remove_unused_data_and_function TARGET)
 endfunction()
 
 
+function(rocbuild_print_args)
+  message(STATUS "ROCBUILD/I: CMake version: ${CMAKE_VERSION}")
+  message(STATUS "ROCBUILD/I: ROCBUILD_PLATFORM: ${ROCBUILD_PLATFORM}")
+  message(STATUS "ROCBUILD/I: ROCBUILD_ARCH: ${ROCBUILD_ARCH}")
+endfunction()
+
+
+rocbuild_print_args()
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()
