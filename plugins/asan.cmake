@@ -1,6 +1,6 @@
 # Author: Zhuo Zhang <imzhuo@foxmail.com>
 # Homepage: https://github.com/zchrissirhcz/rocbuild
-# Last update: 2024-11-09 12:37:00
+# Last update: 2024-12-12 00:14:00
 cmake_minimum_required(VERSION 3.15)
 include_guard()
 
@@ -61,8 +61,7 @@ if(ASAN_AVAILABLE)
 
     # https://devblogs.microsoft.com/cppblog/msvc-address-sanitizer-one-dll-for-all-runtime-configurations/
     if((CMAKE_C_COMPILER_VERSION STRGREATER_EQUAL 17.7) OR (CMAKE_CXX_COMPILER_VERSION STRGREATER_EQUAL 17.7))
-      if(CMAKE_GENERATOR MATCHES "Visual Studio") # for running/debugging in Visual Studio
-        cmake_minimum_required(VERSION 3.27)
+      if((CMAKE_GENERATOR MATCHES "Visual Studio") AND (CMAKE_VERSION VERSION_GREATER_EQUAL "3.27")) # for running/debugging in Visual Studio
         if(CMAKE_GENERATOR_PLATFORM MATCHES "x64")
           set(CMAKE_VS_DEBUGGER_ENVIRONMENT "PATH=$(VC_ExecutablePath_x64);%PATH%\nASAN_SYMBOLIZER_PATH=$(VC_ExecutablePath_x64)")
         elseif(CMAKE_GENERATOR_PLATFORM MATCHES "Win32")
@@ -70,7 +69,8 @@ if(ASAN_AVAILABLE)
         endif()
       endif()
 
-      if((CMAKE_GENERATOR MATCHES "Ninja") OR COPY_ASAN_DLLS)
+      if((CMAKE_GENERATOR MATCHES "Ninja") OR COPY_ASAN_DLLS OR
+          ((CMAKE_GENERATOR MATCHES "Visual Studio") AND (CMAKE_VERSION VERSION_LESS "3.27")) )
         get_filename_component(COMPILER_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
         file(GLOB ASAN_DLLS "${COMPILER_DIR}/clang_rt.asan_dynamic*.dll")
         foreach(ASAN_DLL ${ASAN_DLLS})
