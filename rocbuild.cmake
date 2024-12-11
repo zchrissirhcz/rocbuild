@@ -305,6 +305,16 @@ function(rocbuild_print_args)
 endfunction()
 
 
+function(rocbuild_enable_asan TARGET)
+  if(MSVC)
+    target_compile_options(${TARGET} PUBLIC /fsanitize=address)
+  else()
+    target_compile_options(${TARGET} PUBLIC -fsanitize=address -fno-omit-frame-pointer -g)
+    target_link_options(${TARGET} PUBLIC -fsanitize=address)
+  endif()
+endfunction()
+
+
 rocbuild_print_args()
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()
