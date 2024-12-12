@@ -361,6 +361,34 @@ function(rocbuild_enable_asan TARGET)
 endfunction()
 
 
+function(rocbuild_set_vs_debugger_environment TARGET)
+  # Skip non-Visual Studio generators
+  if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+    return()
+  endif()
+
+  # Skip non-executable targets
+  get_target_property(TARGET_TYPE ${TARGET} TYPE)
+  if(NOT TARGET_TYPE STREQUAL "EXECUTABLE")
+    return()
+  endif()
+  
+  # Retrieve all target dependencies
+  rocbuild_get_target_dependencies(TARGET_DEPENDENCIES ${TARGET})
+
+  set(DLL_DIRECTORIES "")
+  foreach(DEPENDENCY IN LISTS TARGET_DEPENDENCIES)
+    get_target_property(TYPE ${DEPENDENCY} TYPE)
+    if(TYPE STREQUAL "SHARED_LIBRARY")
+      set(DLL_DIRECTORY $<TARGET_FILE_DIR:${DEPENDENCY}>)
+      list(APPEND DLL_DIRECTORIES ${DLL_DIRECTORY})
+    endif()
+  endforeach()
+
+  set_target_properties(${TARGET} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${DLL_DIRECTORIES};%PATH%")
+endfunction()
+
+
 rocbuild_print_args()
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()
