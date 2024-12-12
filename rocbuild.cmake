@@ -305,7 +305,7 @@ function(rocbuild_print_args)
 endfunction()
 
 
-function(rocbuild_target_enable_asan TARGET)
+function(rocbuild_enable_asan TARGET)
   # Retrieve all target dependencies
   rocbuild_get_target_dependencies(TARGETS_TO_PROCESS ${TARGET})
 
