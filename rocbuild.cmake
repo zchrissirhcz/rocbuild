@@ -305,7 +305,29 @@ function(rocbuild_print_args)
 endfunction()
 
 
+function(rocbuild_is_asan_available OUTPUT_VARIABLE)
+  if((CMAKE_C_COMPILER_ID MATCHES "GNU|Clang") OR (CMAKE_CXX_COMPILER_ID STREQUAL "GNU|Clang"))
+    set(${OUTPUT_VARIABLE} TRUE PARENT_SCOPE)
+  elseif(MSVC)
+    # cl.exe >= 16.7 is required for ASAN
+    if(CMAKE_C_COMPILER_VERSION STRLESS 16.7 OR CMAKE_CXX_COMPILER_VERSION STRLESS 16.7)
+      set(${OUTPUT_VARIABLE} FALSE PARENT_SCOPE)
+    else()
+      set(${OUTPUT_VARIABLE} TRUE PARENT_SCOPE)
+    endif()
+  else()
+    set(${OUTPUT_VARIABLE} FALSE PARENT_SCOPE)
+  endif()
+endfunction()
+
+
 function(rocbuild_enable_asan TARGET)
+  rocbuild_is_asan_available(ASAN_AVAILABLE)
+  if(NOT ASAN_AVAILABLE)
+    message(WARNING "ASAN is not available for the current compiler")
+    return()
+  endif()
+
   # Retrieve all target dependencies
   rocbuild_get_target_dependencies(TARGETS_TO_PROCESS ${TARGET})
 
