@@ -308,6 +308,7 @@ endfunction()
 function(rocbuild_enable_asan TARGET)
   if(MSVC)
     target_compile_options(${TARGET} PUBLIC /fsanitize=address)
+    target_link_options(${TARGET} PUBLIC /ignore:4300) # /INCREMENTAL
   else()
     target_compile_options(${TARGET} PUBLIC -fsanitize=address -fno-omit-frame-pointer -g)
     target_link_options(${TARGET} PUBLIC -fsanitize=address)
