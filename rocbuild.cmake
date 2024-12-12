@@ -361,6 +361,7 @@ function(rocbuild_enable_asan TARGET)
 endfunction()
 
 
+# Should be called after rocbuild_enable_asan()
 function(rocbuild_set_vs_debugger_environment TARGET)
   # Skip non-Visual Studio generators
   if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
@@ -373,19 +374,42 @@ function(rocbuild_set_vs_debugger_environment TARGET)
     return()
   endif()
   
+  set(EXTRA_PATHS)
+  set(EXTRA_VARS) 
+  if(CMAKE_C_COMPILER_ID STREQUAL "MSVC" OR CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # Check if TARGET is with ASAN enabled
+    get_target_property(TARGET_COMPILE_OPTIONS ${TARGET} COMPILE_OPTIONS)
+    if(TARGET_COMPILE_OPTIONS MATCHES "/fsanitize=address")
+      # https://devblogs.microsoft.com/cppblog/msvc-address-sanitizer-one-dll-for-all-runtime-configurations/
+      if((CMAKE_C_COMPILER_VERSION STRGREATER_EQUAL 17.7) OR (CMAKE_CXX_COMPILER_ID STRGREATER_EQUAL 17.7))
+        if(CMAKE_GENERATOR_PLATFORM MATCHES "x64")
+          list(APPEND EXTRA_PATHS "$(VC_ExecutablePath_x64)")
+          list(APPEND EXTRA_VARS "ASAN_SYMBOLIZER_PATH=$(VC_ExecutablePath_x64)")
+        elseif(CMAKE_GENERATOR_PLATFORM MATCHES "Win32")
+          list(APPEND EXTRA_PATHS "$(VC_ExecutablePath_x86)")
+          list(APPEND EXTRA_VARS "ASAN_SYMBOLIZER_PATH=$(VC_ExecutablePath_x86)")
+        endif()
+      endif()
+    endif()
+  endif()
+
   # Retrieve all target dependencies
   rocbuild_get_target_dependencies(TARGET_DEPENDENCIES ${TARGET})
-
-  set(DLL_DIRECTORIES "")
   foreach(DEPENDENCY IN LISTS TARGET_DEPENDENCIES)
     get_target_property(TYPE ${DEPENDENCY} TYPE)
     if(TYPE STREQUAL "SHARED_LIBRARY")
       set(DLL_DIRECTORY $<TARGET_FILE_DIR:${DEPENDENCY}>)
-      list(APPEND DLL_DIRECTORIES ${DLL_DIRECTORY})
+      list(APPEND EXTRA_PATHS ${DLL_DIRECTORY})
     endif()
   endforeach()
 
-  set_target_properties(${TARGET} PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${DLL_DIRECTORIES};%PATH%")
+  set(VS_DEBUGGER_ENVIRONMENT "PATH=${EXTRA_PATHS};%PATH%")
+  if(EXTRA_VARS)
+    string(APPEND VS_DEBUGGER_ENVIRONMENT "\n")
+    string(APPEND VS_DEBUGGER_ENVIRONMENT "${EXTRA_VARS}")
+  endif()
+  
+  set_target_properties(${TARGET} PROPERTIES VS_DEBUGGER_ENVIRONMENT "${VS_DEBUGGER_ENVIRONMENT}")
 endfunction()
 
 
