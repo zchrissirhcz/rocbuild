@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
-project(asan)
+project(test_asan)
 
 include(../../rocbuild.cmake)
 
-add_executable(test basic-global-overflow.cpp)
+add_executable(basic-global-overflow basic-global-overflow.cpp)
+rocbuild_target_enable_asan(basic-global-overflow)
 
-rocbuild_enable_asan(test)
+add_library(matrix INTERFACE matrix.hpp)
+add_executable(test_matrix test_matrix.cpp)
+target_link_libraries(test_matrix PRIVATE matrix)
+rocbuild_target_enable_asan(matrix)

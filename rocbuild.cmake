@@ -50,7 +50,7 @@ endmacro()
 
 # Transitively list all link libraries of a target (recursive call)
 # Modified from https://github.com/libigl/libigl/blob/main/cmake/igl/igl_copy_dll.cmake, GPL-3.0 / MPL-2.0
-function(rocbuild_get_dependencies_recursive OUTPUT_VARIABLE TARGET)
+function(rocbuild_get_target_dependencies_impl OUTPUT_VARIABLE TARGET)
   get_target_property(_aliased ${TARGET} ALIASED_TARGET)
   if(_aliased)
     set(TARGET ${_aliased})
@@ -74,7 +74,7 @@ function(rocbuild_get_dependencies_recursive OUTPUT_VARIABLE TARGET)
 
       if(NOT (DEPENDENCY IN_LIST VISITED_TARGETS))
         list(APPEND VISITED_TARGETS ${DEPENDENCY})
-        rocbuild_get_dependencies_recursive(VISITED_TARGETS ${DEPENDENCY})
+        rocbuild_get_target_dependencies_impl(VISITED_TARGETS ${DEPENDENCY})
       endif()
     endif()
   endforeach()
@@ -82,9 +82,9 @@ function(rocbuild_get_dependencies_recursive OUTPUT_VARIABLE TARGET)
 endfunction()
 
 # Transitively list all link libraries of a target
-function(rocbuild_get_dependencies OUTPUT_VARIABLE TARGET)
+function(rocbuild_get_target_dependencies OUTPUT_VARIABLE TARGET)
   set(DISCOVERED_TARGETS "")
-  rocbuild_get_dependencies_recursive(DISCOVERED_TARGETS ${TARGET})
+  rocbuild_get_target_dependencies_impl(DISCOVERED_TARGETS ${TARGET})
   set(${OUTPUT_VARIABLE} ${DISCOVERED_TARGETS} PARENT_SCOPE)
 endfunction()
 
@@ -132,7 +132,7 @@ function(rocbuild_copy_dlls target)
   )
 
   # Retrieve all target dependencies
-  rocbuild_get_dependencies(TARGET_DEPENDENCIES ${target})
+  rocbuild_get_target_dependencies(TARGET_DEPENDENCIES ${target})
 
   set(DEPENDENCY_FILES "")
   foreach(DEPENDENCY IN LISTS TARGET_DEPENDENCIES)
@@ -305,14 +305,37 @@ function(rocbuild_print_args)
 endfunction()
 
 
-function(rocbuild_enable_asan TARGET)
+function(rocbuild_target_enable_asan TARGET)
+  # Retrieve all target dependencies
+  rocbuild_get_target_dependencies(TARGETS_TO_PROCESS ${TARGET})
+
   if(MSVC)
-    target_compile_options(${TARGET} PUBLIC /fsanitize=address)
-    target_link_options(${TARGET} PUBLIC /ignore:4300) # /INCREMENTAL
+    set(ASAN_COMPILE_OPTIONS /fsanitize=address)
+    set(ASAN_LINK_OPTIONS /ignore:4300) # /INCREMENTAL
   else()
-    target_compile_options(${TARGET} PUBLIC -fsanitize=address -fno-omit-frame-pointer -g)
-    target_link_options(${TARGET} PUBLIC -fsanitize=address)
-  endif()
+    set(ASAN_COMPILE_OPTIONS -fsanitize=address -fno-omit-frame-pointer -g)
+    set(ASAN_LINK_OPTIONS -fsanitize=address)
+  endif()  
+
+  # Add TARGET itself to the list of targets to process
+  list(APPEND TARGETS_TO_PROCESS ${TARGET})
+
+  foreach(DEPENDENCY IN LISTS TARGETS_TO_PROCESS)
+    # Skip imported targets
+    get_target_property(IMPORTED ${DEPENDENCY} IMPORTED)
+    if(IMPORTED)
+      continue()
+    endif()
+
+    get_target_property(TYPE ${DEPENDENCY} TYPE)
+    if(TYPE STREQUAL "INTERFACE_LIBRARY")
+      target_compile_options(${DEPENDENCY} INTERFACE ${ASAN_COMPILE_OPTIONS})
+      target_link_options(${DEPENDENCY} INTERFACE ${ASAN_LINK_OPTIONS})
+    else()
+      target_compile_options(${DEPENDENCY} PUBLIC ${ASAN_COMPILE_OPTIONS})
+      target_link_options(${DEPENDENCY} PUBLIC ${ASAN_LINK_OPTIONS})
+    endif()
+  endforeach()
 endfunction()
 
 
