@@ -238,7 +238,7 @@ function(rocbuild_set_debug_postfix TARGET)
   # determine TARGET type
   get_target_property(TYPE ${TARGET} TYPE)
   if(NOT TYPE)
-    message(FATAL_ERROR "rocbuild_define_package() called with non-existent target: ${TARGET}")
+    message(FATAL_ERROR "rocbuild_set_debug_postfix() called with non-existent target: ${TARGET}")
   endif()
 
   # determine if TARGET is imported
