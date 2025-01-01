@@ -413,6 +413,37 @@ function(rocbuild_set_vs_debugger_environment TARGET)
 endfunction()
 
 
+macro(rocbuild_import_package RECIPE)
+  # Parse attributes from recipe
+  string(REGEX MATCH "^([^/]+)/(.+)$" _ "${RECIPE}")
+  set(pkg_name ${CMAKE_MATCH_1})
+  set(pkg_version ${CMAKE_MATCH_2})
+
+  message(STATUS "[debug] package name: ${pkg_name}")
+  message(STATUS "[debug] package version: ${pkg_version}")
+
+  set(pkg_dir ".rocpkg/${pkg_name}-${pkg_version}")
+  if(NOT EXISTS ${pkg_dir})
+    message(FATAL_ERROR "${pkg_dir} not exist. \nPlease run: python rocpkg.py install ${RECIPE}")
+  endif()
+
+  add_library(${pkg_name} INTERFACE)
+  target_include_directories(${pkg_name}
+    INTERFACE
+      ${pkg_dir}
+  )
+  set_target_properties(${pkg_name} PROPERTIES
+    VERSION ${pkg_version}
+    INTERFACE_${pkg_name}_VERSION "${pkg_version}"
+  )
+
+  # cleanup
+  unset(pkg_name)
+  unset(pkg_version)
+  unset(pkg_dir)
+endmacro()
+
+
 rocbuild_print_args()
 rocbuild_set_artifacts_path()
 rocbuild_enable_ninja_colorful_output()
