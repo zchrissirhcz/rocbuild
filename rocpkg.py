@@ -12,11 +12,11 @@ def install_package(recipe: str):
     e.g. CLI11/2.3.2
     """
 
-    rockpkg_dir = Path('.rockpkg')
-    rockpkg_dir.mkdir(exist_ok=True)
+    rocpkg_dir = Path('.rocpkg')
+    rocpkg_dir.mkdir(exist_ok=True)
     
     pkg_name, pkg_version = recipe.split('/')
-    install_cmd = f'git clone {PKG_REPO} -b {pkg_name}/{pkg_version} .rockpkg/{pkg_name}-{pkg_version}'
+    install_cmd = f'git clone {PKG_REPO} -b {pkg_name}/{pkg_version} .rocpkg/{pkg_name}-{pkg_version}'
     
     print(f'[debug] install cmd: {install_cmd}')
     
@@ -29,8 +29,8 @@ def install_package(recipe: str):
 
 def main():
     if len(sys.argv) < 3:
-        print('Usage: rockpkg install <包名>/<版本号>')
-        print('e.g.: rockpkg install CLI11/2.4.2')
+        print('Usage: rocpkg install <包名>/<版本号>')
+        print('e.g.: rocpkg install CLI11/2.4.2')
         sys.exit(1)
         
     command = sys.argv[1]
