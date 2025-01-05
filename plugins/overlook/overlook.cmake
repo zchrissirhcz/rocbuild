@@ -12,7 +12,7 @@ include_guard()
 
 set(OVERLOOK "${CMAKE_CURRENT_LIST_FILE}")
 
-set(OVERLOOK_VERSION "2024.06.12")
+set(OVERLOOK_VERSION "2025.01.05")
 option(OVERLOOK_GLOBAL "Apply overlook globally?" ON)
 
 set(OVERLOOK_C_COMPILE_OPTIONS)
@@ -439,8 +439,17 @@ if((CMAKE_C_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
   list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Werror=implicit-fallthrough)
   list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=implicit-fallthrough)
 elseif((CMAKE_C_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-  list(APPEND OVERLOOK_C_COMPILE_OPTIONS  -Werror=implicit-fallthrough)
-  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS  -Werror=implicit-fallthrough)
+  list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Werror=implicit-fallthrough)
+  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=implicit-fallthrough)
+endif()
+
+## rule37: 遇到第一个报错就停止编译
+if((CMAKE_C_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
+  list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Wfatal-errors)
+  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Wfatal-errors)
+elseif((CMAKE_C_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+  list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Wfatal-errors)
+  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Wfatal-errors)
 endif()
 
 # rule5: 避免使用影子(shadow)变量
