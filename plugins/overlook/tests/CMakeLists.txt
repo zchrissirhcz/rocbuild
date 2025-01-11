@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(test_overlook)
 
+message("CMAKE_C_COMPILER_ID: ${CMAKE_C_COMPILER_ID}")
+message("CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
 include(../overlook.cmake)
 
 add_executable(test1 test1.c)
