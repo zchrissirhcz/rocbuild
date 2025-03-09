@@ -12,7 +12,7 @@ include_guard()
 
 set(OVERLOOK "${CMAKE_CURRENT_LIST_FILE}")
 
-set(OVERLOOK_VERSION "2025.01.05")
+set(OVERLOOK_VERSION "2025.03.09")
 option(OVERLOOK_GLOBAL "Apply overlook globally?" ON)
 
 set(OVERLOOK_C_COMPILE_OPTIONS)
@@ -450,6 +450,13 @@ if((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
 elseif((CMAKE_C_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
   list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Wfatal-errors)
   list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Wfatal-errors)
+endif()
+
+## rule38: 函数承诺不抛异常， 但具体实现抛出了异常
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=exceptions)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=exceptions)
 endif()
 
 # rule5: 避免使用影子(shadow)变量
