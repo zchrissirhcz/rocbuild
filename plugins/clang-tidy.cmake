@@ -63,6 +63,12 @@ function(rocbuild_apply_clang_tidy CLANG_TIDY_EXECUTABLE TARGET)
     list(APPEND clang_tidy_full_command "${CMAKE_OSX_SYSROOT}")
   endif()
 
+  if(CMAKE_CROSSCOMPILING AND (CMAKE_SYSTEM_NAME STREQUAL "QNX"))
+    list(APPEND clang_tidy_full_command "--")
+    list(APPEND clang_tidy_full_command "-isysroot")
+    list(APPEND clang_tidy_full_command "${QNX_TARGET}")
+  endif()
+
   add_custom_target(
     clang-tidy_${TARGET}
     COMMAND ${clang_tidy_full_command}
