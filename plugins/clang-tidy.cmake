@@ -1,6 +1,7 @@
 # Author: Zhuo Zhang <imzhuo@foxmail.com>
 # Homepage: https://github.com/zchrissirhcz/rocbuild
-# Last update: 2025-03-09 15:08:06
+# Create: 2025-03-09 15:08:06
+# Modify: 2025-03-21 22:08:00
 
 # This cmake plugin let you run clang-tidy on specified target
 # Each time you run "make", it report warnings if potential bug found
@@ -15,6 +16,9 @@
 # 
 # # ubuntu 22.04
 # rocbuild_apply_clang_tidy(clang-tidy-18 main)
+#
+# # macOS
+# rocbuild_apply_clang_tidy("/Users/zz/soft/LLVM-20.1.1-macOS-ARM64/bin/clang-tidy" main)
 #
 
 cmake_minimum_required(VERSION 3.15)
@@ -51,9 +55,15 @@ function(rocbuild_apply_clang_tidy CLANG_TIDY_EXECUTABLE TARGET)
   list(APPEND clang_tidy_full_command "${CMAKE_BINARY_DIR}")
   list(APPEND clang_tidy_full_command "${src_path_lst}")
 
+  if(APPLE)
+    list(APPEND clang_tidy_full_command "--")
+    list(APPEND clang_tidy_full_command "-isysroot")
+    list(APPEND clang_tidy_full_command "${CMAKE_OSX_SYSROOT}")
+  endif()
+
   add_custom_target(
-    ${TARGET}_clang-tidy
+    clang-tidy_${TARGET}
     COMMAND ${clang_tidy_full_command}
   )
-  add_dependencies(${TARGET} ${TARGET}_clang-tidy)
+  add_dependencies(${TARGET} clang-tidy_${TARGET})
 endfunction()
