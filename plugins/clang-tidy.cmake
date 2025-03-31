@@ -54,6 +54,8 @@ function(rocbuild_apply_clang_tidy CLANG_TIDY_EXECUTABLE TARGET)
   list(APPEND clang_tidy_full_command "-p")
   list(APPEND clang_tidy_full_command "${CMAKE_BINARY_DIR}")
   list(APPEND clang_tidy_full_command "${src_path_lst}")
+  
+  list(APPEND clang_tidy_full_command "--use-color")
 
   if(APPLE)
     list(APPEND clang_tidy_full_command "--")
