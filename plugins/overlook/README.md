@@ -63,7 +63,7 @@ Moreover, on the GCC/Clang common flags:
 
 Here comes the contradiction: which warnings should be considered carefully?
 
-In [overlook.cmake](overlook.cmake), there are **36 serious compilation warnings' checking, treat corresponding C/C++ flags as error**, with corresponding unit tests (See [tests](tests)). Most are extracted from practical cross-platform projects, and does resolve severe bugs such as:
+In [overlook.cmake](overlook.cmake), there are **39 serious compilation warnings' checking, treat corresponding C/C++ flags as error**, with corresponding unit tests (See [tests](tests)). Most are extracted from practical cross-platform projects, and does resolve severe bugs such as:
 - Segmentation Faults(caused by address truncation)
 - Memory leaks(caused by missing including header file)
 - Trap(caused by missing return value)

@@ -12,7 +12,7 @@ include_guard()
 
 set(OVERLOOK "${CMAKE_CURRENT_LIST_FILE}")
 
-set(OVERLOOK_VERSION "2025.03.09")
+set(OVERLOOK_VERSION "2025.04.12")
 option(OVERLOOK_GLOBAL "Apply overlook globally?" ON)
 
 set(OVERLOOK_C_COMPILE_OPTIONS)
@@ -460,6 +460,16 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=exceptions)
 endif()
+
+## rule39: using reserved identifiers is forbidden
+## https://en.cppreference.com/w/cpp/language/identifiers
+if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+  list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Werror=reserved-identifier)
+endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=reserved-identifier)
+endif()
+
 
 # rule5: 避免使用影子(shadow)变量
 # 有时候会误伤, 例如eigen等开源项目, 可以手动关掉
