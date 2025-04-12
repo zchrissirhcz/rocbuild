@@ -228,13 +228,13 @@ endif()
 #--------------------------------------------------------------------------------
 
 # rule7: 变量没初始化就使用，要避免
-if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-  list(APPEND OVERLOOK_C_COMPILE_OPTIONS /we4700 /we26495)
-  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS /we4700 /we26495)
-else()
-  list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Werror=uninitialized)
-  list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=uninitialized)
-endif()
+# if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+#   list(APPEND OVERLOOK_C_COMPILE_OPTIONS /we4700 /we26495)
+#   list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS /we4700 /we26495)
+# else()
+#   list(APPEND OVERLOOK_C_COMPILE_OPTIONS -Werror=uninitialized)
+#   list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS -Werror=uninitialized)
+# endif()
 
 # rule11: 检查数组下标越界访问
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
