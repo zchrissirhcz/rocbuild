@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(test_overlook)
 
+set(CMAKE_CXX_STANDARD 11)
 message("CMAKE_C_COMPILER_ID: ${CMAKE_C_COMPILER_ID}")
 message("CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
 include(../overlook.cmake)
