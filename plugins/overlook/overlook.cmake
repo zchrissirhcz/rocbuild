@@ -97,6 +97,9 @@ endif()
 # 函数应该有返回值但没有 return 返回值，或不是所有路径都有返回值，C和C++编译器默认不报错，改为强制报错
 # 解决bug: lane detect; vpdt for循环无法跳出(android输出trap); lane calib库读取到随机值导致获取非法格式asvl, 开asan则表现为读取NULL指针
 # -O3时输出内容和其他优化等级不一样 (from 三老师)
+# android arm64 表现为 trap: https://zhuanlan.zhihu.com/p/587673235
+# centos 升级 GCC 遇到 SIGSEGV: https://ttf248.life/p/升级gcc版本导致程序崩溃代码不规范的隐患
+# https://pvs-studio.com/en/blog/posts/cpp/0917/ https://godbolt.org/z/dqqYqsj5E
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
   list(APPEND OVERLOOK_C_COMPILE_OPTIONS /we4716 /we4715)
   list(APPEND OVERLOOK_CXX_COMPILE_OPTIONS /we4716 /we4715)
