@@ -1,12 +1,13 @@
 # Author: Zhuo Zhang <imzhuo@foxmail.com>
 # Homepage: https://github.com/zchrissirhcz/rocbuild
-# Last update: 2024-06-12 00:00:00
+# Last update: 2025-04-29 08:00:00
 cmake_minimum_required(VERSION 3.15)
 include_guard()
 
-# Usage:
-# add_executable(hello hello.cpp)
-# apply_cppcheck(hello)
+# Apply cppcheck on source files of given target
+# Example usage:
+#   add_executable(hello hello.cpp)
+#   apply_cppcheck(hello)
 function(apply_cppcheck TARGET)
   find_program(CMAKE_CXX_CPPCHECK NAMES cppcheck)
 
@@ -26,8 +27,8 @@ function(apply_cppcheck TARGET)
   set(cppcheck_raw_command "cppcheck --enable=warning --inconclusive --force --inline-suppr ${src_path_lst}")
   string(REPLACE " " ";" cppcheck_converted_command "${cppcheck_raw_command}")
   add_custom_target(
-    cppcheck
+    cppcheck_${TARGET}
     COMMAND ${cppcheck_converted_command}
   )
-  add_dependencies(${TARGET} cppcheck)
+  add_dependencies(${TARGET} cppcheck_${TARGET})
 endfunction()
