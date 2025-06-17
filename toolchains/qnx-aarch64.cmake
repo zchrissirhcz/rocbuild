@@ -8,7 +8,7 @@ set(CMAKE_SYSTEM_NAME QNX)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)
 
 if((NOT DEFINED ENV{QNX_HOST}) OR (NOT DEFINED ENV{QNX_TARGET}))
-  message(FATAL_ERROR "Please do: source /path/to/qnxsdp-env.sh (Linux) or call /path/to/qnxsdp-env.bat (Windows)"
+  message(FATAL_ERROR "Please do: source /path/to/qnxsdp-env.sh (Linux) or call /path/to/qnxsdp-env.bat (Windows)")
 endif()
 set(QNX_HOST "$ENV{QNX_HOST}")
 set(QNX_TARGET "$ENV{QNX_TARGET}")
