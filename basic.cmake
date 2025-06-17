@@ -36,3 +36,11 @@ if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
   # Where add_library(SHARED) generates the linker import file (.tbd) of the shared library target if ENABLE_EXPORTS target property is set
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" CACHE INTERNAL "")
 endif()
+
+################################################################################
+# Source files with utf-8 encoding. Solves Visual Studio warning C4819
+################################################################################
+add_compile_options(
+  "$<$<COMPILE_LANG_AND_ID:C,MSVC>:/source-charset:utf-8>"
+  "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/source-charset:utf-8>"
+)
