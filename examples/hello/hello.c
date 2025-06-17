@@ -1,7 +1,7 @@
+#include "hello.h"
 #include <stdio.h>
 
-int main()
+void hello(const char* name)
 {
-    printf("hello world\n");
-    return 0;
+    printf("hello, %s\n", name);
 }

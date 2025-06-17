@@ -3,6 +3,5 @@ project(RocBuildExamples)
 
 include(../rocbuild.cmake)
 
-add_subdirectory(hello)
 add_subdirectory(use_opencv)
 add_subdirectory(clang-tidy)
