@@ -420,5 +420,5 @@ endmacro()
 
 
 rocbuild_print_args()
-rocbuild_set_artifacts_path()
+include(${CMAKE_CURRENT_LIST_DIR}/basic.cmake)
 rocbuild_enable_ninja_colorful_output()

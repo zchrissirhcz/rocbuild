@@ -12,19 +12,13 @@ include_guard()
 
 set(OVERLOOK "${CMAKE_CURRENT_LIST_FILE}")
 
-set(OVERLOOK_VERSION "2025.04.14")
+set(OVERLOOK_VERSION "2025.06.17")
 option(OVERLOOK_GLOBAL "Apply overlook globally?" ON)
 
 set(OVERLOOK_C_COMPILE_OPTIONS)
 set(OVERLOOK_CXX_COMPILE_OPTIONS)
 
-# Print overlook information
-message("----------------------------------------------------------")
-message("  Overlook: a cmake tool for safer C/C++ programming      ")
-message("  Author  : Zhuo Zhang (imzhuo@foxmail.com)               ")
-message("  Homepage: https://github.com/zchrissirhcz/rocbuild   ")
-message("  Version : ${OVERLOOK_VERSION}                           ")
-message("----------------------------------------------------------")
+message(STATUS "using overlook.cmake, version : ${OVERLOOK_VERSION}")
 
 if(CMAKE_C_COMPILER_ID)
   set(OVERLOOK_WITH_C TRUE)

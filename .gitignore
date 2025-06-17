@@ -1,9 +1,1 @@
-build*/
-cmake-build-*/
-.cache/
-.vscode/
-.vs/
-.idea/
-__pycache__/
-.DS_Store
-a.out
+build/
