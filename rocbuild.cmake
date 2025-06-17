@@ -209,30 +209,6 @@ function(rocbuild_copy_opencv_videoio_plugin_dlls target)
 endfunction()
 
 
-function(rocbuild_set_debug_postfix TARGET)
-  # determine TARGET type
-  get_target_property(TYPE ${TARGET} TYPE)
-  if(NOT TYPE)
-    message(FATAL_ERROR "rocbuild_set_debug_postfix() called with non-existent target: ${TARGET}")
-  endif()
-
-  # determine if TARGET is imported
-  get_target_property(IMPORTED ${TARGET} IMPORTED)
-  if(IMPORTED)
-    return()
-  endif()
-
-  # Don't treat for single config generators
-  if(NOT CMAKE_CONFIGURATION_TYPES)
-    return()
-  endif()
-
-  if(TYPE MATCHES "^(STATIC_LIBRARY|SHARED_LIBRARY|EXECUTABLE)$")
-    set_target_properties(${TARGET} PROPERTIES DEBUG_POSTFIX "_d")
-  endif()
-endfunction()
-
-
 function(rocbuild_hide_symbols TARGET)
   get_target_property(TARGET_TYPE ${TARGET} TYPE)
   if(TARGET_TYPE STREQUAL "SHARED_LIBRARY")  
