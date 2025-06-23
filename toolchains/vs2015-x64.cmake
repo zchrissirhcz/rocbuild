@@ -14,7 +14,7 @@ set(CMAKE_MT "C:/Program Files (x86)/Windows Kits/10/bin/x64/mt.exe")
 include_directories(
   "C:/Program Files (x86)/Windows Kits/10/Include/10.0.14393.0/ucrt" # stdio.h, stdlib.h, etc.
   "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include" # algorithm, vector, etc.
-  "C:/Program Files (x86)/Windows Kits/10/Include/10.0.14393.0/um" # windows.h, winbase.h, etc.
+  "C:/Program Files (x86)/Windows Kits/10/Include/10.0.14393.0/um" # Windows.h, winbase.h, etc.
   "C:/Program Files (x86)/Windows Kits/10/Include/10.0.14393.0/shared" # winapifamily.h, windef.h, winnt.h, etc.
 )
 link_directories(
