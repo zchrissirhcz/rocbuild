@@ -30,14 +30,19 @@ def list_imported_dlls_and_paths(pe_path):
             dll = entry.dll.decode('ascii')
             path = find_dll(dll, search_paths)
             if path:
-                status = f"{dll} : {path}"
+                status = f"\t{dll} => {path}"
             else:
-                status = f"{dll} : not found"
+                status = f"\t{dll} => not found"
             dlls.append(status)
     return dlls
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python dll_checker.py <exe_path>")
-    for info in list_imported_dlls_and_paths(exe):
+        sys.exit(1)
+    exe_path = sys.argv[1]
+    if not os.path.exists(exe_path):
+        print(f"Error: exe file <exe_path> does not exist!")
+        sys.exit(2)
+    for info in list_imported_dlls_and_paths(exe_path):
         print(info)
