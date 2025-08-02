@@ -42,7 +42,7 @@ if __name__ == "__main__":
         sys.exit(1)
     exe_path = sys.argv[1]
     if not os.path.exists(exe_path):
-        print(f"Error: exe file <exe_path> does not exist!")
+        print(f"Error: exe file ${exe_path} does not exist!")
         sys.exit(2)
     for info in list_imported_dlls_and_paths(exe_path):
         print(info)
