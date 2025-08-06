@@ -1,4 +1,5 @@
-# vs2022-arm.toolchain.cmake
+# author: Zhuo Zhang <imzhuo@foxmail.com>
+
 # for Ninja, Ninja Multi-Config
 
 set(CMAKE_SYSTEM_NAME Windows)

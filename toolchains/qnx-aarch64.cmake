@@ -1,3 +1,5 @@
+# author: Zhuo Zhang <imzhuo@foxmail.com>
+
 # Request license and download SDP from QNX Software Center: https://www.qnx.com/products/everywhere/
 # reference: 
 # - https://github.com/conan-io/conan/issues/15752
