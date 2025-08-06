@@ -5,7 +5,11 @@
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
-set(TOOLCHAIN_ROOT "/home/zz/soft/toolchains/arm-bare-metal/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi")
+if(WIN32)
+    set(TOOLCHAIN_ROOT "D:/soft/toolchains/arm-bare-metal/gcc-arm-9.2-2019.12-mingw-w64-i686-arm-none-eabi")
+else()
+    set(TOOLCHAIN_ROOT "/home/zz/soft/toolchains/arm-bare-metal/gcc-arm-9.2-2019.12-x86_64-arm-none-eabi")
+endif()
 
 find_program(CMAKE_C_COMPILER   arm-none-eabi-gcc PATHS "${TOOLCHAIN_ROOT}/bin" NO_DEFAULT_PATH)
 find_program(CMAKE_CXX_COMPILER arm-none-eabi-g++ PATHS "${TOOLCHAIN_ROOT}/bin" NO_DEFAULT_PATH)

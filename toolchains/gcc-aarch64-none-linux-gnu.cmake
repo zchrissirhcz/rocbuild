@@ -5,7 +5,11 @@
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)
 
-set(TOOLCHAIN_ROOT /opt/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu)
+if(WIN32)
+    set(TOOLCHAIN_ROOT "D:/soft/toolchains/aarch64-linux-gnu/gcc-arm-9.2-2019.12-mingw-w64-i686-aarch64-none-linux-gnu")
+else()
+    set(TOOLCHAIN_ROOT "/opt/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu")
+endif()
 
 find_program(CMAKE_C_COMPILER   aarch64-none-linux-gnu-gcc PATHS "${TOOLCHAIN_ROOT}/bin" NO_DEFAULT_PATH)
 find_program(CMAKE_CXX_COMPILER aarch64-none-linux-gnu-g++ PATHS "${TOOLCHAIN_ROOT}/bin" NO_DEFAULT_PATH)
