@@ -1,7 +1,7 @@
 # author: Zhuo Zhang <imzhuo@foxmail.com>
 
 # Request license and download SDP from QNX Software Center: https://www.qnx.com/products/everywhere/
-# reference: 
+# reference:
 # - https://github.com/conan-io/conan/issues/15752
 # - https://www.qnx.com/developers/docs/7.1/index.html#com.qnx.doc.security.system/topic/manual/stack_protection.html
 # - https://www.qnx.com/developers/docs/8.0/com.qnx.doc.security.system/topic/manual/stack_protection.html
@@ -24,7 +24,6 @@ set(QNX_TARGET "$ENV{QNX_TARGET}")
 # this does not require license
 find_program(CMAKE_C_COMPILER   ntoaarch64-gcc    PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
 find_program(CMAKE_CXX_COMPILER ntoaarch64-g++    PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
-
 find_program(CMAKE_AR           ntoaarch64-ar     PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
 find_program(CMAKE_STRIP        ntoaarch64-strip  PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
 find_program(CMAKE_RANLIB       ntoaarch64-ranlib PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
@@ -33,5 +32,14 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+# This generates --sysroot=/home/zz/soft/toolchains/qnx710/target/qnx7 in compile_commands.json helps LSP for finding C standard library headers like <stdio.h>
+set(CMAKE_SYSROOT "${QNX_TARGET}")
+
+# This generates -isystem /home/zz/soft/toolchains/qnx710/target/qnx7/usr/include in compile_commands.json which helps LSP for finding system header like <sys/types.h>, <dirent.h>
+set(CMAKE_C_FLAGS_INIT "-D__QNX__ -isystem ${QNX_TARGET}/usr/include")
+
+# This generates -isystem /home/zz/soft/toolchains/qnx710/target/qnx7/usr/include/c++/v1 in compile_commands.json which helps LSP for finding C++ standard library headers like <iostream>, <vector>
+set(CMAKE_CXX_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} -isystem ${QNX_TARGET}/usr/include/c++/v1")
 
 include(${CMAKE_CURRENT_LIST_DIR}/toolchain-checker.cmake)
