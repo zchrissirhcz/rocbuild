@@ -24,6 +24,23 @@ if((CMAKE_C_COMPILER_ID STREQUAL "MSVC") OR (CMAKE_CXX_COMPILER_ID STREQUAL "MSV
   else()
     set(ASAN_OPTIONS /fsanitize=address /Zi)
   endif()
+
+  # Check if AddressSanitizer component is installed
+  if((CMAKE_C_COMPILER_VERSION STRGREATER_EQUAL 17.7) OR (CMAKE_CXX_COMPILER_VERSION STRGREATER_EQUAL 17.7))
+    set(asan_dll_path)
+    string(REPLACE "cl.exe" "clang_rt.asan_dynamic-x86_64.dll" asan_dll_path ${CMAKE_C_COMPILER})
+    set(asan_dll_debug_path)
+    string(REPLACE "cl.exe" "clang_rt.asan_dbg_dynamic-x86_64.dll" asan_dll_debug_path ${CMAKE_CXX_COMPILER})
+
+    message(STATUS "Checking ASAN DLL: ${asan_dll_path}")
+    message(STATUS "Checking ASAN debug DLL: ${asan_dll_debug_path}")
+    if(EXISTS ${asan_dll_path} AND EXISTS ${asan_dll_debug_path})
+      message(STATUS "Found ASAN DLLs")
+    else()
+      message(FATAL_ERROR "Cannot find ASAN DLLs, please install 'C++ AddressSanitizer' component for Visual Studio")
+      set(ASAN_AVAILABLE OFF)
+    endif()
+  endif()
 elseif(MSVC AND ((CMAKE_C_COMPILER_ID STREQUAL "Clang") OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")))
   message(WARNING "Clang-CL not support setup AddressSanitizer via CMakeLists.txt")
   set(ASAN_AVAILABLE OFF)
