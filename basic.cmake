@@ -44,3 +44,62 @@ add_compile_options(
   "$<$<COMPILE_LANG_AND_ID:C,MSVC>:/source-charset:utf-8>"
   "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/source-charset:utf-8>"
 )
+
+function(rocbuild_set_install_runtime_path target)
+  if(NOT TARGET ${target})
+    message(FATAL_ERROR "Target ${target} does not exist.")
+  endif()
+
+  # skip windows
+  if(WIN32)
+    message(WARNING "Windows does not use rpath, skipping setting runtime path for target ${target}.")
+    return()
+  endif()
+
+  # skip imported targets
+  get_target_property(is_imported ${target} IMPORTED)
+  if(is_imported)
+    message(WARNING "Target ${target} is imported, cannot set runtime path.")
+    return()
+  endif()
+
+  # get target type
+  get_target_property(target_type ${target} TYPE)
+  if(NOT (target_type MATCHES "^(SHARED_LIBRARY|EXECUTABLE)$"))
+    message(WARNING "Target ${target} is not a shared library or executable, cannot set runtime path.")
+    return()
+  endif()
+
+  if(APPLE)
+    if(target_type STREQUAL "SHARED_LIBRARY")
+      set_target_properties(${target} PROPERTIES
+        INSTALL_RPATH "@loader_path"
+      )
+    elseif(target_type STREQUAL "EXECUTABLE")
+      set_target_properties(${target} PROPERTIES
+        INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../lib"
+      )
+    endif()
+  elseif(ANDROID)
+    # https://gitlab.kitware.com/cmake/cmake/-/issues/23670
+    # cmake assumes android-ndk does not support RPATH, but it actually does, so we set it manually here
+    target_link_options(${target} PRIVATE
+      "-Wl,-rpath,\$ORIGIN:\$ORIGIN/../lib"
+    )
+  elseif(UNIX) # Linux
+    if(target_type STREQUAL "SHARED_LIBRARY")
+      target_link_options(${target} PRIVATE
+        "-Wl,--enable-new-dtags"     # generate DT_RUNPATH
+        # "-Wl,--disable-new-dtags"  # generate DT_RPATH (not recommended)
+        "-Wl,-rpath,$ORIGIN"
+      )
+    elseif(target_type STREQUAL "EXECUTABLE")
+      target_link_options(${target} PRIVATE
+        "-Wl,--enable-new-dtags"     # generate DT_RUNPATH
+        # "-Wl,--disable-new-dtags"  # generate DT_RPATH (not recommended)
+        "-Wl,-rpath,$ORIGIN/../lib"
+      )
+    endif()
+  endif()
+
+endfunction()
