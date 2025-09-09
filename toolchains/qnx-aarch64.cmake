@@ -33,13 +33,4 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
-# This generates --sysroot=/home/zz/soft/toolchains/qnx710/target/qnx7 in compile_commands.json helps LSP for finding C standard library headers like <stdio.h>
-set(CMAKE_SYSROOT "${QNX_TARGET}")
-
-# This generates -isystem /home/zz/soft/toolchains/qnx710/target/qnx7/usr/include in compile_commands.json which helps LSP for finding system header like <sys/types.h>, <dirent.h>
-set(CMAKE_C_FLAGS_INIT "-D__QNX__ -isystem ${QNX_TARGET}/usr/include")
-
-# This generates -isystem /home/zz/soft/toolchains/qnx710/target/qnx7/usr/include/c++/v1 in compile_commands.json which helps LSP for finding C++ standard library headers like <iostream>, <vector>
-set(CMAKE_CXX_FLAGS_INIT "${CMAKE_C_FLAGS_INIT} -isystem ${QNX_TARGET}/usr/include/c++/v1")
-
 include(${CMAKE_CURRENT_LIST_DIR}/toolchain-checker.cmake)
