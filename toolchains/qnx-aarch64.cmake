@@ -22,11 +22,11 @@ set(QNX_TARGET "$ENV{QNX_TARGET}")
 # find_program(CMAKE_CXX_COMPILER q++    PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
 
 # this does not require license
-find_program(CMAKE_C_COMPILER   ntoaarch64-gcc    PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
-find_program(CMAKE_CXX_COMPILER ntoaarch64-g++    PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
-find_program(CMAKE_AR           ntoaarch64-ar     PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
-find_program(CMAKE_STRIP        ntoaarch64-strip  PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
-find_program(CMAKE_RANLIB       ntoaarch64-ranlib PATHS "${QNX_HOST}/usr/bin" NO_DEFAULT_PATH)
+find_program(CMAKE_C_COMPILER   ntoaarch64-gcc    PATHS "${QNX_HOST}/usr/bin" REQUIRED NO_DEFAULT_PATH)
+find_program(CMAKE_CXX_COMPILER ntoaarch64-g++    PATHS "${QNX_HOST}/usr/bin" REQUIRED NO_DEFAULT_PATH)
+find_program(CMAKE_AR           ntoaarch64-ar     PATHS "${QNX_HOST}/usr/bin" REQUIRED NO_DEFAULT_PATH)
+find_program(CMAKE_STRIP        ntoaarch64-strip  PATHS "${QNX_HOST}/usr/bin" REQUIRED NO_DEFAULT_PATH)
+find_program(CMAKE_RANLIB       ntoaarch64-ranlib PATHS "${QNX_HOST}/usr/bin" REQUIRED NO_DEFAULT_PATH)
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
