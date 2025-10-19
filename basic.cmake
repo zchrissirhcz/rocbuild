@@ -45,6 +45,14 @@ add_compile_options(
   "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/source-charset:utf-8>"
 )
 
+# RPATH
+if(NOT CMAKE_INSTALL_RPATH)
+  set(CMAKE_INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib")
+endif()
+if(CMAKE_CROSSCOMPILING)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+endif()
+
 function(rocbuild_set_install_runtime_path target)
   if(NOT TARGET ${target})
     message(FATAL_ERROR "Target ${target} does not exist.")
