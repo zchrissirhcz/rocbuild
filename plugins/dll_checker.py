@@ -8,10 +8,8 @@ def get_search_paths(exe_path):
     system32 = os.path.join(os.environ['WINDIR'], 'System32')
     syswow64 = os.path.join(os.environ['WINDIR'], 'SysWOW64')
     env_paths = os.environ['PATH'].split(';')
-    # 查找路径（可视系统、位数实际调整增减顺序）
     paths = [exe_dir, system32, syswow64] + env_paths
-    # 去重
-    paths = list(dict.fromkeys([p for p in paths if os.path.isdir(p)]))
+    paths = list(dict.fromkeys([p for p in paths if os.path.isdir(p)])) # remove duplicated
     return paths
 
 def find_dll(dll_name, paths):

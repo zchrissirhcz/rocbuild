@@ -1,10 +1,9 @@
 # Author: Zhuo Zhang <imzhuo@foxmail.com>
 # Homepage: https://github.com/zchrissirhcz/rocbuild
-# Last update: 2024-05-26 23:30:00
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.20)
 include_guard()
 
-set(SUMMARY_VERSION "2024-06-12 00:00:00")
+set(SUMMARY_VERSION "2025-10-19 14:00:00")
 
 message("================================================================================")
 message("  CMake Configure Summary    ")
@@ -30,12 +29,12 @@ message("")
 message("Toolchain Information:")
 message("  Cross Compiling: ${CMAKE_CROSSCOMPILING}")
 message("  C/C++ Compiler:")
-message("    - C   standard version:     C${CMAKE_C_STANDARD}")
+message("    - C   standard version:     ${CMAKE_C_STANDARD}")
 message("    - C   standard required:    ${CMAKE_C_STANDARD_REQUIRED}")
 message("    - C   standard extensions:  ${CMAKE_C_EXTENSIONS}")
 message("    - C   compiler version:     ${CMAKE_C_COMPILER_VERSION}")
 message("    - C   compiler:             ${CMAKE_C_COMPILER}")
-message("    - C++ standard version:     C++${CMAKE_CXX_STANDARD}")
+message("    - C++ standard version:     ${CMAKE_CXX_STANDARD}")
 message("    - C++ standard required:    ${CMAKE_CXX_STANDARD_REQUIRED}")
 message("    - C++ standard extensions:  ${CMAKE_CXX_EXTENSIONS}")
 message("    - C++ compiler version:     ${CMAKE_CXX_COMPILER_VERSION}")
