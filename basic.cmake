@@ -40,10 +40,9 @@ endif()
 ################################################################################
 # Source files with utf-8 encoding. Solves Visual Studio warning C4819
 ################################################################################
-add_compile_options(
-  "$<$<COMPILE_LANG_AND_ID:C,MSVC>:/source-charset:utf-8>"
-  "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/source-charset:utf-8>"
-)
+if(MSVC)
+  add_compile_options("/source-charset:utf-8") # for stronger setup, see plugins/windows_source_encoding.cmake
+endif()
 
 # RPATH
 if(NOT CMAKE_INSTALL_RPATH)
