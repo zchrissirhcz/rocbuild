@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(test_copy_dlls)
 
 include(../../rocbuild.cmake)
+include(../../plugins/copy_dll.cmake)
 
 add_library(foo SHARED ../src/foo.c)
 target_compile_definitions(foo PRIVATE FOO_EXPORTS)
