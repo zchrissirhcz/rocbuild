@@ -1,6 +1,6 @@
 # Author: Zhuo Zhang <imzhuo@foxmail.com>
 # Homepage: https://github.com/zchrissirhcz/rocbuild
-# Last update: 2025-08-31 09:43:00
+# Last update: 2026-11-06 14:44:00
 cmake_minimum_required(VERSION 3.15)
 include_guard()
 
@@ -46,7 +46,7 @@ elseif(MSVC AND ((CMAKE_C_COMPILER_ID STREQUAL "Clang") OR (CMAKE_CXX_COMPILER_I
   set(ASAN_AVAILABLE OFF)
 elseif((CMAKE_C_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   OR (CMAKE_C_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-  if($ENV{QNX_TARGET} MATCHES "qnx7$")
+  if((CMAKE_SYSTEM_NAME STREQUAL "QNX") AND ($ENV{QNX_TARGET} MATCHES "qnx7$"))
     set(ASAN_AVAILABLE OFF)
     message(WARNING "QNX SDP 7.1 does not support ASAN")
   else()
