@@ -36,7 +36,7 @@ def list_imported_dlls_and_paths(pe_path):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python dll_checker.py <exe_path>")
+        print("Usage: python dll_deps.py <exe_path>")
         sys.exit(1)
     exe_path = sys.argv[1]
     if not os.path.exists(exe_path):

@@ -24,17 +24,50 @@ cl hello.c
 
 需要先安装 vswhere 和 visual studio。 解决了“不知道 vcvarsall.bat 在哪、 有太多的 vs 版本容易选错” 的问题。
 
-## dll_checker.py
+## dll_deps.py（原 dll_checker.py）
 
 列出 .dll 文件的依赖文件，格式类似 Linux 下的 ldd 命令。
 
 ```
-PS C:\work\rocbuild\plugins> python .\dll_checker.py c:\windows\system32\opencl.dll                                        
+PS C:\work\rocbuild\plugins> python .\dll_deps.py c:\windows\system32\opencl.dll                                        
         ADVAPI32.dll => c:\windows\system32\ADVAPI32.dll
         CFGMGR32.dll => c:\windows\system32\CFGMGR32.dll
         ole32.dll => c:\windows\system32\ole32.dll
         KERNEL32.dll => c:\windows\system32\KERNEL32.dll
 ```
+
+## dll_info.py
+
+检查 DLL 的版本号、Visual Studio 版本、Debug/Release 和导出符号。单文件，内置测试；依赖 `pefile`：
+
+```
+python -m pip install pefile
+python .\dll_info.py C:\Windows\System32\kernel32.dll
+python .\dll_info.py --limit 20 C:\Windows\System32\user32.dll
+python .\dll_info.py --json C:\Windows\System32\msvcp140.dll
+```
+
+输出示例：
+
+```
+File: C:\Windows\System32\kernel32.dll
+  File version: 10.0.26100.9711 (WinBuild.160101.0800)
+  Product version: 10.0.26100.9711
+  Visual Studio: Visual Studio 2022 (MSVC 14.38, v143)
+  Build mode: Release (no debug markers; a PDB alone is not proof of Debug)
+  Exports: 1698
+         1  AcquireSRWLockExclusive -> NTDLL.RtlAcquireSRWLockExclusive
+```
+
+说明：VS 大版本由 linker version 推断；Debug/Release 由 Debug CRT、RTC 字符串和
+PDB 路径启发式判断；没有版本资源时显示 `(none)`；“符号”指 PE 导出表。
+
+测试：
+
+```
+python .\dll_info.py --test
+```
+
 
 ## copy_dll.cmake
 
