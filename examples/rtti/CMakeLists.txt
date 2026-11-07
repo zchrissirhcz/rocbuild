@@ -1,0 +1,1 @@
+add_executable(test_rtti test_rtti.cpp)
