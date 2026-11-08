@@ -62,6 +62,7 @@ PowerShell 环境脚本。除特别说明外，CMake 插件都可以单文件拷
 
 | 工具 | 作用 |
 | --- | --- |
+| [arche/arche.py](arche/arche.py) | 轻量 C/C++ 构建工具：INI 描述、MSVC/GCC/Android、自带增量编译 |
 | [juicy/juicy.py](juicy/juicy.py) | 简化 CMake configure / build，支持 VS、Linux、Android、QNX、MinGW |
 | [dll_deps.py](dll_deps.py) | 类似 `ldd`，列出 PE 文件依赖的 DLL 及路径 |
 | [dll_info.py](dll_info.py) | 查看 DLL 版本、VS 版本、Debug/Release 和导出符号 |
@@ -341,6 +342,16 @@ endif()
 ```
 
 ## Python 工具
+
+### arche.py
+
+[arche](arche/README.md) 是一个轻量 C/C++ 构建工具：一个 `arche.py` + 一个
+`arche.ini`，不生成工程，直接构建。支持 Windows MSVC、Linux GCC/Clang、
+Android NDK，以及静态库、动态库、header-only、目标依赖、增量编译和
+`compile_commands.json`。
+
+适合不想引入 CMake 的小型工程，或需要把构建描述和工具一起拷贝的场景。完整文档见
+[arche/README.md](arche/README.md) 和 [arche/docs/arche-ini.md](arche/docs/arche-ini.md)。
 
 ### juicy.py
 

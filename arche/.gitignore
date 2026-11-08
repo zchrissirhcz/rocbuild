@@ -1,0 +1,7 @@
+build/
+__pycache__/
+*.pyc
+*.obj
+*.o
+*.exe
+examples/01-hello-cli/hello
