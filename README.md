@@ -1,5 +1,21 @@
 # 编译相关小工具
 
+## juicy
+
+juicy/juicy.py 让 cmake 的使用更方便：
+
+native build:
+```
+python juicy.py -S . -B build # native build, choose latest VS / GCC compiler
+python juicy.py -p vs2026 -a x64 -S . -B build # windows
+python juicy.py -p linux -a x64 -S . -B build # linux
+```
+
+cross build:
+```
+python juicy.py -p android -a armv8-a -r C:\soft\toolchains\android-ndk\r26c -S . -B build
+```
+
 ## overlook/overlook.cmake
 
 视30+编译warning为error，让C/C++编译器报错更准确些。
