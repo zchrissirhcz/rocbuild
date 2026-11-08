@@ -24,6 +24,20 @@ cl hello.c
 
 需要先安装 vswhere 和 visual studio。 解决了“不知道 vcvarsall.bat 在哪、 有太多的 vs 版本容易选错” 的问题。
 
+## vslocate.c
+
+来自 https://github.com/mjansson/vslocate 的工具, 极简定位 Visual Studio 安装路径。
+
+```cmd
+cl /O1 /Os /Gm- /GF- /sdl /MT /GS /D COMPILE_TOOL=1 vslocate.c /link /out:vslocate.exe
+```
+
+## vslocator（独立仓库）
+
+https://github.com/zchrissirhcz/vslocator
+
+和微软官方 vswhere.exe 完全一致输出的 Python 实现。
+
 ## dll_deps.py（原 dll_checker.py）
 
 列出 .dll 文件的依赖文件，格式类似 Linux 下的 ldd 命令。
