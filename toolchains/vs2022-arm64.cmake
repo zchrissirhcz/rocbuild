@@ -3,7 +3,7 @@
 # for Ninja, Ninja Multi-Config
 
 set(CMAKE_SYSTEM_NAME Windows)
-set(CMAKE_SYSTEM_PROCESSOR x86_64)
+set(CMAKE_SYSTEM_PROCESSOR arm64)
 
 set(VS2022_PATH "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin")
 set(WINDOWS_SDK_VERSION "10.0.26100.0")
@@ -13,7 +13,7 @@ set(CMAKE_RC_COMPILER "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/a
 set(CMAKE_MT "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/arm64/mt.exe")
 
 include_directories(
-  "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/ucrt/stdio.h" # stdio.h, stdlib.h, etc.
+  "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/ucrt" # stdio.h, stdlib.h, etc.
   "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/include" # algorithm, vector, etc.
   "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/um"  # Windows.h, winbase.h, etc.
   "C:/Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/shared" # winapifamily.h, windef.h, winnt.h, etc.
