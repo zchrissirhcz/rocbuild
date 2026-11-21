@@ -66,6 +66,7 @@ PowerShell 环境脚本。除特别说明外，CMake 插件都可以单文件拷
 | [juicy/juicy.py](juicy/juicy.py) | 简化 CMake configure / build，支持 VS、Linux、Android、QNX、MinGW |
 | [dll_deps.py](dll_deps.py) | 类似 `ldd`，列出 PE 文件依赖的 DLL 及路径 |
 | [dll_info.py](dll_info.py) | 查看 DLL 版本、VS 版本、Debug/Release 和导出符号 |
+| [analyze_win_lib/](analyze_win_lib/) | 查看 `.lib` 是静态库还是导入库、CRT（MT/MTd/MD/MDd）、Debug/Release 与 VS 版本 |
 | [QueryCodePage.py](QueryCodePage.py) | 查询 Windows 当前 ANSI 代码页（ACP） |
 | [test.py](test.py) | 运行 `tests/` 下的 CMake 集成测试 |
 
@@ -431,6 +432,46 @@ PDB 路径启发式判断；没有版本资源时显示 `(none)`；“符号”�
 
 ```powershell
 python .\dll_info.py --test
+```
+
+### analyze_win_lib
+
+查看 MSVC 编译的 `.lib` 文件信息：是**静态库还是导入库（DLL 配套）**、若是静态库则判定
+**CRT 链接方式（MT/MTd/MD/MDd）**、**Debug/Release** 和 **VS 版本**。代码在
+[analyze_win_lib/](analyze_win_lib/) 目录下，以库函数方式调用：
+
+```python
+import analyze_win_lib as a
+r = a.analyze_lib(r"C:\path\to\foo.lib")
+print(r["lib_type"], r["build_type"], r["crt"], r["vs_label"])
+```
+
+返回字段（`analyze_lib` 的 dict）：`lib_type`（静态库 / import lib）、`is_import`、
+`build_type`（Debug/Release/...）、`crt`（MT/MTd/MD/MDd，导入库为 `N/A`）、
+`vs_label` / `vs_year`、`representative`（首个对象路径）等。
+
+判定方法（全部基于库文件内部内容，与 `.lib` 文件名后缀无关）：
+
+- **类型**：导入库成员含 `.idata` 导入目录段、成员名形如 `xxx.dll`；静态库成员是可解析的
+  COFF / bigobj `.obj`。
+- **CRT**：首选 `.drectve` 的 `/DEFAULTLIB` 与 `/FAILIFMISMATCH:RuntimeLibrary`（如
+  `libcmt`→MT、`MSVCRTD`→MDd）；当 drectve 无 CRT 默认库时（如 EasyX），回退到符号分析——
+  CRT 函数以 `__imp_` 前缀出现（动态 CRT）→MD，直接调用（静态 CRT）→MT。
+- **Debug/Release**：由对象路径的构建目录（`Debug\`/`Release\`）与 CRT 库名 `d` 后缀判定，
+  不依赖文件名的 `d` / `_d` 后缀。
+- **VS 版本**：优先从 `.debug$S` 中的 `\MSVC\<版本>\include` 提取精确工具链版本，否则从对象
+  路径关键字（`vs2015`/`vs2017`/`vs2022`...）推断。
+
+测试（`analyze_win_lib/` 下自带 `unittest`，夹具为用真实 MSVC 编译的极小 `.lib`，无需编译器）：
+
+```powershell
+python -m unittest discover -s analyze_win_lib -v
+```
+
+夹具可用真实 MSVC 工具链重新生成（会覆盖 `fixtures/`，需本机装有 VS）：
+
+```powershell
+python analyze_win_lib/build_fixtures.py
 ```
 
 ### QueryCodePage.py
