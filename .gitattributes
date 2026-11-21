@@ -1,0 +1,12 @@
+# 行尾约定
+# shell 脚本始终用 LF
+*.sh    text eol=lf
+# Python 用 CRLF
+*.py    text eol=crlf
+# Windows 批处理脚本始终用 CRLF
+*.cmd   text eol=crlf
+*.bat   text eol=crlf
+# PowerShell 脚本始终用 CRLF
+*.ps1   text eol=crlf
+# 库文件视为二进制，不做行尾转换
+*.lib   binary

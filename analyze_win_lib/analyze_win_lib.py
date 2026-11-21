@@ -347,15 +347,20 @@ def analyze_lib(path):
 
 
 def main():
-    libs = [
-        r"C:\pkgs\opencv\4.12.0\vs2022-x64-static\lib\ade.lib",
-        r"C:\pkgs\EasyX_20240225\lib\VC2015\x64\EasyXa.lib",
-        r"C:\Users\zz\Downloads\EasyX_26.10.25\lib_vc2015\x64\EasyXa.lib",
-        r"C:\pkgs\ncnn\20250916\windows-vs2022-shared\x64\lib\ncnn.lib",
-        r"C:\work\play\test\build\Debug\hello.lib",
-    ]
-    for p in libs:
-        r = analyze_lib(p)
+    # libs = [
+    #     r"C:\pkgs\opencv\4.12.0\vs2022-x64-static\lib\ade.lib",
+    #     r"C:\pkgs\EasyX_20240225\lib\VC2015\x64\EasyXa.lib",
+    #     r"C:\Users\zz\Downloads\EasyX_26.10.25\lib_vc2015\x64\EasyXa.lib",
+    #     r"C:\pkgs\ncnn\20250916\windows-vs2022-shared\x64\lib\ncnn.lib",
+    #     r"C:\work\play\test\build\Debug\hello.lib",
+    # ]
+    # 从命令行读取要分析的 .lib 文件路径（可多个）
+    libs = sys.argv[1:]
+    if not libs:
+        print("用法: python analyze_win_lib.py <xxx.lib> [更多 .lib ...]")
+        sys.exit(1)
+    for path in libs:
+        r = analyze_lib(path)
         print("=" * 72)
         print(f"FILE : {r['path']}")
         print(f"类型 : {r['lib_type']}  (成员 {r['member_count']} 个, 其中 .obj {r['obj_count']} 个)")
